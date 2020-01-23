@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+	      "esModuleInterop": true,
+	      "allowSyntheticDefaultImports": true,
+	      "strict": true,
+	      "jsx": "react",
+	      "baseUrl": "./src",
+	      "paths": {
+	          "~*": ["./*"],
+            "~assets": ["../assets/*"], 
+	          "~img*": ["../assets/img/*"]
+
+	      }, 
+	      "typeRoots": ["node_modules/@types"]  
+    },
+    "include": ["src/**/*", "assets/**/*", "types.d.ts"] 
+}

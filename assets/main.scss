@@ -1,0 +1,44 @@
+// Optionally override some settings
+// $color-brand: #ffffff;
+
+// Import the theme
+@import "node_modules/vanilla-framework/scss/vanilla";
+@include vanilla;
+
+g.gauge {
+  .gauge-arc {
+    fill: none;
+    transition: stroke-dashoffset 500ms, stroke 250ms;
+  }
+}
+
+$theme-colors: (
+  "x-light": $color-x-light,
+  "light": $color-light,
+  "mid-x-light": $color-mid-x-light,
+  "mid-light": $color-mid-light,
+  "mid-dark": $color-mid-dark,
+  "dark": $color-dark,
+  "x-dark": $color-x-dark,
+  "brand": $color-brand,
+  "negative": $color-negative,
+  "caution": $color-caution,
+  "positive": $color-positive,
+  "information": $color-information,
+  "link": $color-link,
+  "accent": $color-accent,
+  "accent-background": $color-accent-background,
+  "navigation-background": $color-x-light
+);
+
+@each $color, $value in $theme-colors {
+  #{".fill-#{$color}"} {
+    fill: $value !important;
+  }
+  #{".stroke-#{$color}"} {
+    stroke: $value !important;
+  }
+  #{".text-#{$color}"} {
+    color: $value !important;
+  }
+}

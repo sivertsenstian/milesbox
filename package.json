@@ -1,0 +1,52 @@
+{
+  "name": "milesbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "parcel ./assets/index.html",
+      "dist": "parcel build ./assets/index.html",
+      "zip": "zip -r dist.zip dist package.json package-lock.json",
+      "publish": "scp dist.zip pi@192.168.86.82:~/box/",
+      "release": "npm run dist && npm run zip && npm run publish"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connected-react-router": "^6.6.1",
+    "d3-scale": "^3.2.1",
+    "dot-prop-immutable": "^2.0.0",
+    "dot-prop-immutable-chain": "0.0.3",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
+    "react-router-dom": "^5.1.2",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-logger": "^3.0.6",
+    "redux-observable": "^1.2.0",
+    "rxjs": "^6.5.4",
+    "typescript": "^3.7.5",
+    "vanilla-framework": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/d3-scale": "^2.1.1",
+    "@types/dot-prop-immutable": "^1.5.1",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.1.8",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-redux": "^7.1.6",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/redux-immutable-state-invariant": "^2.1.1",
+    "@types/redux-logger": "^3.0.7",
+    "identity-obj-proxy": "^3.0.0",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.19.1",
+    "redux-immutable-state-invariant": "^2.1.0",
+    "sass": "^1.25.0"
+  }
+}
