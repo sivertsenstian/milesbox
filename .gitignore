@@ -188,3 +188,4 @@ sketch
 # End of https://www.gitignore.io/api/web,node,react,linux,emacs
 .parcel-cache
 *.zip
+miles_box_secrets.h
