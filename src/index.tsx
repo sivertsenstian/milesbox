@@ -1,9 +1,9 @@
 import "../assets/main.scss";
 import { createBrowserHistory } from "history";
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import { routerMiddleware, ConnectedRouter } from "connected-react-router";
 import { combineEpics } from "redux-observable";
@@ -17,7 +17,7 @@ import {
   classActionMiddleware,
   Header
 } from "./core";
-import { homeEpics, HomePage, HomeRequesData } from "./home";
+import { homeEpics, HomePage } from "./home";
 
 // Routing
 export const history = createBrowserHistory();
@@ -63,18 +63,6 @@ epicMiddleware.run(rootEpic);
 const NotFound = () => <h2> 404 - NOT FOUND :( </h2>;
 
 const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    // Initial data
-    dispatch(new HomeRequesData(1000, 1));
-    dispatch(new HomeRequesData(1000, 13));
-
-    // Poll every 30sec
-    setInterval(() => dispatch(new HomeRequesData(1000, 1)), 30000);
-    setInterval(() => dispatch(new HomeRequesData(1000, 13)), 30000);
-  }, []);
-
   return (
     <div>
       <Header />

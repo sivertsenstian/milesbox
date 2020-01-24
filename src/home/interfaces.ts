@@ -1,3 +1,4 @@
-export interface IHome {
-  tbd: string;
+export interface IMeasurement {
+  timestamp: number;
+  value: number;
 }

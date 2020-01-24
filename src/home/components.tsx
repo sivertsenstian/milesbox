@@ -1,8 +1,8 @@
-import _last from "lodash/last";
+import _get from "lodash/get";
 import _isNil from "lodash/isNil";
 import _filter from "lodash/filter";
 import _map from "lodash/map";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   AppState,
@@ -11,8 +11,9 @@ import {
   circleCircumference,
   valueAsPercentage
 } from "../core";
-import { HomeSetName } from "./";
+import { HomeRequestData } from "./";
 import * as d3 from "d3-scale";
+import moment from "moment";
 
 export const HomePage = () => {
   return (
@@ -21,6 +22,9 @@ export const HomePage = () => {
         <div className="row">
           <div className="col-6">
             <Card user="Stian" boxId="1000" />
+          </div>
+          <div className="col-6">
+            <Card user="Mads" boxId="2000" />
           </div>
         </div>
       </div>
@@ -33,20 +37,41 @@ const Value = (props: any) => {
 };
 
 export const Card = (props: any) => {
-  const dispatch = useDispatch(),
-    data = useSelector((state: AppState) => {
-      return state.home.data[props.boxId] ?? {};
-    }),
-    temperature = _last(data[1] as any[])?.v ?? 0,
-    humidity = _last(data[13] as any[])?.v ?? 0,
-    tempProgress = valueAsPercentage(temperature, {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Initial data
+    dispatch(new HomeRequestData(props.boxId, 1));
+    dispatch(new HomeRequestData(props.boxId, 13));
+
+    // Poll every 30sec
+    setInterval(() => dispatch(new HomeRequestData(props.boxId, 1)), 10000);
+    setInterval(() => dispatch(new HomeRequestData(props.boxId, 13)), 10000);
+  }, []);
+
+  const [temperature] = useSelector((state: AppState) =>
+      _get(state.home.data, `${props.boxId}.${1}`, [])
+    ),
+    [humidity] = useSelector((state: AppState) =>
+      _get(state.home.data, `${props.boxId}.${13}`, [])
+    ),
+    tempProgress = valueAsPercentage(temperature?.value, {
       min: -10,
       max: 40
     }),
-    humidProgress = valueAsPercentage(humidity, {
+    humidProgress = valueAsPercentage(humidity?.value, {
       min: 0,
       max: 100
     });
+
+  // Check for timer updates every second (to have accurate fromNow time)
+  const [, triggerRender] = useState(0);
+  useEffect(() => {
+    let updateInterval = setInterval(() => triggerRender(i => i + 1), 1000);
+    return () => {
+      clearInterval(updateInterval);
+    };
+  });
 
   return (
     <div className="p-card">
@@ -57,20 +82,20 @@ export const Card = (props: any) => {
       <div className="p-card__content">
         <div className="row">
           <div className="col-3">
-            <h6>Temperature</h6>
+            <h6>Temperature {moment(temperature?.timestamp).fromNow()}</h6>
             <Gauge size={1} degrees={180}>
               <GaugeBar progress={100} size={3} />
               <GaugeBar progress={tempProgress} color="brand" />
             </Gauge>
-            <Value value={temperature} unit="℃" />
+            <Value value={temperature?.value} unit="℃" />
           </div>
           <div className="col-3">
-            <h6>Humidity</h6>
+            <h6>Humidity {moment(humidity?.timestamp).fromNow()}</h6>
             <Gauge size={1} degrees={180}>
               <GaugeBar progress={100} size={3} />
               <GaugeBar progress={humidProgress} color="brand" />
             </Gauge>
-            <Value value={humidity} unit="%" />
+            <Value value={humidity?.value} unit="%" />
           </div>
         </div>
       </div>

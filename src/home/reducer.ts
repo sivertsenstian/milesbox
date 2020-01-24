@@ -1,11 +1,11 @@
 import dotp from "dot-prop-immutable-chain";
-import { HomeActions, HomeActionType } from "./";
+import { HomeActions, HomeActionType, IMeasurement } from "./";
 
 export interface HomeState {
   server: string;
   boxes: any[];
   sensors: any[];
-  data: { [key: string]: any };
+  data: { [key: number]: { [key: number]: IMeasurement[] } };
 }
 
 export const initialState: HomeState = {

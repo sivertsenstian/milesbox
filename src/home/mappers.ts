@@ -1,8 +1,8 @@
-export const echo = {
-  from: (dto: any) => ({
-    id: dto.id,
-    title: dto.title,
-    user: { id: dto.userId },
-    completed: dto.completed
+import { IMeasurement } from "./";
+
+export const measurement = {
+  from: (dto: any): IMeasurement => ({
+    timestamp: Number(dto.t),
+    value: Number(dto.v)
   })
 };

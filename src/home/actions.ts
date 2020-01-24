@@ -2,7 +2,6 @@ import { Action } from "redux";
 import { ISuccessAction, IFailureAction } from "../core";
 
 export enum HomeActionType {
-  SET_NAME = "[Home] Set name",
   REQUEST_DATA = "[Home] Request Data",
   REQUEST_DATA_SUCCESS = "[Home][Success] Request Data",
   REQUEST_DATA_FAILURE = "[Home][Failure] Request Data",
@@ -14,12 +13,7 @@ export enum HomeActionType {
   REQUEST_SENSORS_FAILURE = "[Home][Failure] Request Sensors"
 }
 
-export class HomeSetName implements Action {
-  readonly type = HomeActionType.SET_NAME;
-  constructor(public payload: string) {}
-}
-
-export class HomeRequesData implements Action {
+export class HomeRequestData implements Action {
   readonly type = HomeActionType.REQUEST_DATA;
   constructor(public boxId: number, public sensor: number) {}
 }
@@ -36,7 +30,7 @@ export class HomeRequestDataFailure implements Action, IFailureAction {
   constructor(public payload: any) {}
 }
 
-export class HomeRequesBoxes implements Action {
+export class HomeRequestBoxes implements Action {
   readonly type = HomeActionType.REQUEST_BOXES;
   constructor(public boxId: number, public sensor: number) {}
 }
@@ -71,11 +65,10 @@ export class HomeRequestSensorsFailure implements Action, IFailureAction {
 }
 
 export type HomeActions =
-  | HomeSetName
-  | HomeRequesData
+  | HomeRequestData
   | HomeRequestDataSuccess
   | HomeRequestDataFailure
-  | HomeRequesBoxes
+  | HomeRequestBoxes
   | HomeRequestBoxesSuccess
   | HomeRequestBoxesFailure
   | HomeRequesSensors
