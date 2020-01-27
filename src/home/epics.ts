@@ -10,8 +10,51 @@ import {
   mappers
 } from "./";
 import { AppState } from "../core";
+import {
+  HomeRequestBoxes,
+  HomeRequestBoxesSuccess,
+  HomeRequestBoxesFailure,
+  HomeRequestHealthCheck,
+  HomeRequestHealthCheckSuccess,
+  HomeRequestHealthCheckFailure
+} from "./actions";
 
-const homeEchoEpic$ = (action$: Observable<any>, store$: Observable<any>) => {
+const requestHealthCheck$ = (
+  action$: Observable<any>,
+  store$: Observable<any>
+) => {
+  return action$.pipe(
+    ofType(HomeActionType.REQUEST_HEALTHCHECK),
+    withLatestFrom(store$),
+    mergeMap(([, store]: [HomeRequestHealthCheck, AppState]) => {
+      return ajax.getJSON(`${store.home.server}/health`).pipe(
+        map(() => new HomeRequestHealthCheckSuccess()),
+        catchError(err => of(new HomeRequestHealthCheckFailure(err)))
+      );
+    })
+  );
+};
+
+const requestBoxes$ = (action$: Observable<any>, store$: Observable<any>) => {
+  return action$.pipe(
+    ofType(HomeActionType.REQUEST_BOXES),
+    withLatestFrom(store$),
+    mergeMap(([, store]: [HomeRequestBoxes, AppState]) => {
+      return ajax.getJSON(`${store.home.server}/boxes/`).pipe(
+        map(
+          (response: any) =>
+            new HomeRequestBoxesSuccess(response.map(mappers.box.from))
+        ),
+        catchError(err => of(new HomeRequestBoxesFailure(err)))
+      );
+    })
+  );
+};
+
+const requestSensorData$ = (
+  action$: Observable<any>,
+  store$: Observable<any>
+) => {
   return action$.pipe(
     ofType(HomeActionType.REQUEST_DATA),
     withLatestFrom(store$),
@@ -26,11 +69,15 @@ const homeEchoEpic$ = (action$: Observable<any>, store$: Observable<any>) => {
                 ...response,
                 data: response.data.map(mappers.measurement.from)
               })
-          )
-        )
-        .pipe(catchError(err => of(new HomeRequestDataFailure(err))));
+          ),
+          catchError(err => of(new HomeRequestDataFailure(err)))
+        );
     })
   );
 };
 
-export const homeEpics = combineEpics(homeEchoEpic$);
+export const homeEpics = combineEpics(
+  requestSensorData$,
+  requestBoxes$,
+  requestHealthCheck$
+);

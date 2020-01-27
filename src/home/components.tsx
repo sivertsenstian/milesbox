@@ -16,16 +16,36 @@ import * as d3 from "d3-scale";
 import moment from "moment";
 
 export const HomePage = () => {
+  const boxes = useSelector((state: AppState) => state.home.boxes);
+
+  if (boxes.length === 0) {
+    return (
+      <div className="row" style={{ marginTop: "40px" }}>
+        <div
+          className="col-12"
+          style={{ justifyContent: "center", display: "flex" }}
+        >
+          <i
+            className="p-icon--spinner u-animation--spin"
+            style={{ marginRight: "10px", width: "24px", height: "24px" }}
+          ></i>
+          <div>Please wait... </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="row">
       <div className="col-12">
         <div className="row">
-          <div className="col-6">
-            <Card user="Stian" boxId="1000" />
-          </div>
-          <div className="col-6">
-            <Card user="Mads" boxId="2000" />
-          </div>
+          {boxes.map(box => {
+            return (
+              <div className="col-6" key={box.id}>
+                <Card user={box.name} boxId={box.id} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -33,7 +53,18 @@ export const HomePage = () => {
 };
 
 const Value = (props: any) => {
-  return <h3 className="text-dark">{`${props.value}${props.unit}`} </h3>;
+  const style: any = { textAlign: "center", marginTop: "-60px" };
+
+  if (_isNil(props.value)) {
+    return (
+      <h5 style={style} className="text-mid-light">
+        No data
+      </h5>
+    );
+  }
+  return (
+    <h4 className="text-dark" style={style}>{`${props.value}${props.unit}`}</h4>
+  );
 };
 
 export const Card = (props: any) => {
@@ -74,7 +105,7 @@ export const Card = (props: any) => {
   });
 
   return (
-    <div className="p-card">
+    <div className="p-card box">
       <h3 className="p-card__title">
         <i className="p-icon--information"></i> {props.user}
       </h3>

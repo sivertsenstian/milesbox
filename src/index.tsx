@@ -1,9 +1,9 @@
 import "../assets/main.scss";
 import { createBrowserHistory } from "history";
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import { routerMiddleware, ConnectedRouter } from "connected-react-router";
 import { combineEpics } from "redux-observable";
@@ -15,9 +15,15 @@ import {
   createRootReducer,
   initialState,
   classActionMiddleware,
-  Header
+  Header,
+  AppState
 } from "./core";
-import { homeEpics, HomePage } from "./home";
+import {
+  homeEpics,
+  HomePage,
+  HomeRequestBoxes,
+  HomeRequestHealthCheck
+} from "./home";
 
 // Routing
 export const history = createBrowserHistory();
@@ -61,11 +67,23 @@ epicMiddleware.run(rootEpic);
 
 // VIEW
 const NotFound = () => <h2> 404 - NOT FOUND :( </h2>;
-
 const App = () => {
+  const dispatch = useDispatch(),
+    alive = useSelector((state: AppState) => state.home.alive);
+
+  useEffect(() => {
+    // Health check
+    dispatch(new HomeRequestHealthCheck());
+    setInterval(() => dispatch(new HomeRequestHealthCheck()), 5000);
+  }, []);
+  useEffect(() => {
+    // Fetch available boxes
+    dispatch(new HomeRequestBoxes());
+  }, [alive]);
+
   return (
     <div>
-      <Header />
+      <Header alive={alive} />
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/*" component={NotFound} />

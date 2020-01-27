@@ -12,6 +12,11 @@ g.gauge {
   }
 }
 
+.p-card.box {
+  border-top: 4px solid $color-brand;
+  border-radius: 4px;
+}
+
 $theme-colors: (
   "x-light": $color-x-light,
   "light": $color-light,

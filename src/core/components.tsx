@@ -1,6 +1,5 @@
 import React from "react";
 
-// Available icons: https://fontawesome.com/icons?d=listing&s=solid&m=free
 interface IconProps {
   name: string;
   color: string;
@@ -21,13 +20,24 @@ Icon.defaultProps = {
   size: 1
 };
 
-export const Header = () => {
+export const Header = (props: { alive: boolean }) => {
   return (
     <header className="p-navigation">
-      <div className="navigation__row">
+      <div className="p-navigation__row">
+        <div className="p-navigation__banner">
+          <div className="p-navigation__logo">
+            <a className="p-navigation__link u-vertically-center">
+              <i
+                style={{ marginRight: "5px" }}
+                className={props.alive ? "p-icon--success" : "p-icon--error"}
+              />
+              Online
+            </a>
+          </div>
+        </div>
         <ul className="p-navigation__links" role="menu">
           <li className="p-navigation__link is-selected" role="menuitem">
-            <a href="#">Home</a>
+            <a href="/">Boxes</a>
           </li>
         </ul>
       </div>

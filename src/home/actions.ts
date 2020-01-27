@@ -1,7 +1,11 @@
 import { Action } from "redux";
 import { ISuccessAction, IFailureAction } from "../core";
+import { IBox, IMeasurement } from "./interfaces";
 
 export enum HomeActionType {
+  REQUEST_HEALTHCHECK = "[Home] Request Healthcheck",
+  REQUEST_HEALTHCHECK_SUCCESS = "[Home][Success] Request Healthcheck",
+  REQUEST_HEALTHCHECK_FAILURE = "[Home][Failure] Request Healthcheck",
   REQUEST_DATA = "[Home] Request Data",
   REQUEST_DATA_SUCCESS = "[Home][Success] Request Data",
   REQUEST_DATA_FAILURE = "[Home][Failure] Request Data",
@@ -21,7 +25,9 @@ export class HomeRequestData implements Action {
 export class HomeRequestDataSuccess implements Action, ISuccessAction {
   readonly type = HomeActionType.REQUEST_DATA_SUCCESS;
   readonly success = true;
-  constructor(public payload: { boxId: number; sensor: number; data: any }) {}
+  constructor(
+    public payload: { boxId: number; sensor: number; data: IMeasurement[] }
+  ) {}
 }
 
 export class HomeRequestDataFailure implements Action, IFailureAction {
@@ -32,13 +38,13 @@ export class HomeRequestDataFailure implements Action, IFailureAction {
 
 export class HomeRequestBoxes implements Action {
   readonly type = HomeActionType.REQUEST_BOXES;
-  constructor(public boxId: number, public sensor: number) {}
+  constructor() {}
 }
 
 export class HomeRequestBoxesSuccess implements Action, ISuccessAction {
   readonly type = HomeActionType.REQUEST_BOXES_SUCCESS;
   readonly success = true;
-  constructor(public payload: { boxId: number; sensor: number; value: any }) {}
+  constructor(public payload: IBox[]) {}
 }
 
 export class HomeRequestBoxesFailure implements Action, IFailureAction {
@@ -47,7 +53,7 @@ export class HomeRequestBoxesFailure implements Action, IFailureAction {
   constructor(public payload: any) {}
 }
 
-export class HomeRequesSensors implements Action {
+export class HomeRequestSensors implements Action {
   readonly type = HomeActionType.REQUEST_SENSORS;
   constructor(public boxId: number, public sensor: number) {}
 }
@@ -64,6 +70,23 @@ export class HomeRequestSensorsFailure implements Action, IFailureAction {
   constructor(public payload: any) {}
 }
 
+export class HomeRequestHealthCheck implements Action {
+  readonly type = HomeActionType.REQUEST_HEALTHCHECK;
+  constructor() {}
+}
+
+export class HomeRequestHealthCheckSuccess implements Action, ISuccessAction {
+  readonly type = HomeActionType.REQUEST_HEALTHCHECK_SUCCESS;
+  readonly success = true;
+  constructor() {}
+}
+
+export class HomeRequestHealthCheckFailure implements Action, IFailureAction {
+  readonly type = HomeActionType.REQUEST_HEALTHCHECK_FAILURE;
+  readonly failure = true;
+  constructor(public payload: any) {}
+}
+
 export type HomeActions =
   | HomeRequestData
   | HomeRequestDataSuccess
@@ -71,6 +94,9 @@ export type HomeActions =
   | HomeRequestBoxes
   | HomeRequestBoxesSuccess
   | HomeRequestBoxesFailure
-  | HomeRequesSensors
+  | HomeRequestSensors
   | HomeRequestSensorsSuccess
-  | HomeRequestSensorsFailure;
+  | HomeRequestSensorsFailure
+  | HomeRequestHealthCheck
+  | HomeRequestHealthCheckSuccess
+  | HomeRequestHealthCheckFailure;
