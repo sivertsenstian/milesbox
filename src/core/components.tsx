@@ -1,4 +1,6 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { AppState } from "./";
 
 interface IconProps {
   name: string;
@@ -21,12 +23,17 @@ Icon.defaultProps = {
 };
 
 export const Header = (props: { alive: boolean }) => {
+  const server = useSelector((state: AppState) => state.home.server);
   return (
     <header className="p-navigation">
       <div className="p-navigation__row">
         <div className="p-navigation__banner">
           <div className="p-navigation__logo">
-            <a className="p-navigation__link u-vertically-center">
+            <a
+              className="p-navigation__link u-vertically-center"
+              href={server}
+              target="_blank"
+            >
               <i
                 style={{ marginRight: "5px" }}
                 className={props.alive ? "p-icon--success" : "p-icon--error"}

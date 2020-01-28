@@ -13,7 +13,17 @@ g.gauge {
 }
 
 .p-card.box {
-  border-top: 4px solid $color-brand;
+  transition: border-top-color 1000ms;
+  &.online {
+    border-top: 4px solid $color-positive;
+  }
+  &.faulty {
+    border-top: 4px solid $color-caution;
+  }
+  &.offline {
+    border-top: 4px solid $color-negative;
+  }
+
   border-radius: 4px;
 }
 

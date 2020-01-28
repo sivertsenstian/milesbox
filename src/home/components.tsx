@@ -67,6 +67,20 @@ const Value = (props: any) => {
   );
 };
 
+const MeasurementHeader = (props: any) => {
+  const valid = !_isNil(props.value?.timestamp);
+
+  return (
+    <h6>
+      <span className={!valid ? "text-mid-light" : ""}>
+        {`${props.name} `}
+        {valid && moment(props.value?.timestamp).fromNow()}
+        {!valid && " - no data"}
+      </span>
+    </h6>
+  );
+};
+
 export const Card = (props: any) => {
   const dispatch = useDispatch();
 
@@ -104,8 +118,14 @@ export const Card = (props: any) => {
     };
   });
 
+  const ssm = Math.min(
+      moment().diff(moment(temperature?.timestamp ?? 0), "seconds"),
+      moment().diff(moment(humidity?.timestamp ?? 0), "seconds")
+    ),
+    status = ssm < 60 ? "online" : ssm < 240 ? "faulty" : "offline";
+
   return (
-    <div className="p-card box">
+    <div className={`p-card box ${status}`}>
       <h3 className="p-card__title">
         <i className="p-icon--information"></i> {props.user}
       </h3>
@@ -113,7 +133,7 @@ export const Card = (props: any) => {
       <div className="p-card__content">
         <div className="row">
           <div className="col-3">
-            <h6>Temperature {moment(temperature?.timestamp).fromNow()}</h6>
+            <MeasurementHeader name="Temperature" value={temperature} />
             <Gauge size={1} degrees={180}>
               <GaugeBar progress={100} size={3} />
               <GaugeBar progress={tempProgress} color="brand" />
@@ -121,7 +141,7 @@ export const Card = (props: any) => {
             <Value value={temperature?.value} unit="℃" />
           </div>
           <div className="col-3">
-            <h6>Humidity {moment(humidity?.timestamp).fromNow()}</h6>
+            <MeasurementHeader name="Humidity" value={humidity} />
             <Gauge size={1} degrees={180}>
               <GaugeBar progress={100} size={3} />
               <GaugeBar progress={humidProgress} color="brand" />
