@@ -41,10 +41,8 @@ void loop() {
   sendTemperature(temperature);
   sendHumidity(humidity);
 
-  // if the server's disconnected, stop the client:
-  if (!client.connected()) {
-    client.stop();
-  }
+  // Disconnect after sending data;
+  client.stop();
 
   // wait a bit before next update
   delay(DELAY_IN_MS);
