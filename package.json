@@ -5,19 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "parcel ./assets/index.html",
-      "dist": "parcel build ./assets/index.html",
-      "zip": "zip -r dist.zip dist package.json package-lock.json",
-      "publish": "scp dist.zip pi@192.168.86.82:~/box/",
-      "release": "npm run dist && npm run zip && npm run publish"
+    "start": "parcel ./assets/index.html",
+    "dist": "parcel build ./assets/index.html",
+    "zip": "zip -r dist.zip dist package.json package-lock.json",
+    "publish": "scp dist.zip pi@192.168.86.82:~/box/",
+    "release": "npm run dist && npm run zip && npm run publish"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "connected-react-router": "^6.6.1",
     "d3-scale": "^3.2.1",
     "dot-prop-immutable": "^2.0.0",
     "dot-prop-immutable-chain": "0.0.3",
+    "ionicons": "^4.6.3",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "react": "^16.12.0",

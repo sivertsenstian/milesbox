@@ -6,7 +6,14 @@ export interface HomeState {
   alive: boolean;
   boxes: any[];
   sensors: any[];
-  data: { [key: number]: { [key: number]: IMeasurement[] } };
+  data: {
+    [key: number]: {
+      [key: number]: {
+        trend: IMeasurement[];
+        latest: IMeasurement;
+      };
+    };
+  };
 }
 
 export const initialState: HomeState = {
@@ -27,10 +34,16 @@ export const homeReducer = (state = initialState, action: HomeActions) => {
         .set("boxes", action.payload)
         .value();
     }
-    case HomeActionType.REQUEST_DATA_SUCCESS: {
+    case HomeActionType.REQUEST_DATA_TREND_SUCCESS: {
       const { boxId, sensor, data } = action.payload;
       return dotp(state)
-        .set(`data.${boxId}.${sensor}`, data)
+        .set(`data.${boxId}.${sensor}.trend`, data)
+        .value();
+    }
+    case HomeActionType.REQUEST_DATA_LATEST_SUCCESS: {
+      const { boxId, sensor, data } = action.payload;
+      return dotp(state)
+        .set(`data.${boxId}.${sensor}.latest`, data)
         .value();
     }
     case HomeActionType.REQUEST_HEALTHCHECK_SUCCESS: {

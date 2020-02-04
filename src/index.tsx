@@ -5,7 +5,6 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
-import { routerMiddleware, ConnectedRouter } from "connected-react-router";
 import { combineEpics } from "redux-observable";
 import { createEpicMiddleware } from "redux-observable";
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -24,6 +23,7 @@ import {
   HomeRequestBoxes,
   HomeRequestHealthCheck
 } from "./home";
+import "ionicons/dist/css/ionicons.min.css";
 
 // Routing
 export const history = createBrowserHistory();
@@ -52,12 +52,11 @@ const middleware =
         immutableValidator({
           ignore: []
         }),
-        routerMiddleware(history),
         epicMiddleware,
         classActionMiddleware,
         logger
       ]
-    : [routerMiddleware(history), epicMiddleware, classActionMiddleware];
+    : [epicMiddleware, classActionMiddleware];
 const store = createStore(
   createRootReducer(history),
   initialState,
@@ -94,11 +93,9 @@ const App = () => {
 
 const Root = ({ store }: { store: any }) => (
   <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <Router>
-        <Route path="/" component={App} />
-      </Router>
-    </ConnectedRouter>
+    <Router>
+      <Route path="/" component={App} />
+    </Router>
   </Provider>
 );
 

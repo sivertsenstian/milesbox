@@ -12,6 +12,12 @@ g.gauge {
   }
 }
 
+g.bar {
+  .bar-fill {
+    transition: height 500ms;
+  }
+}
+
 .p-card.box {
   transition: border-top-color 1000ms;
   &.online {
@@ -56,4 +62,20 @@ $theme-colors: (
   #{".text-#{$color}"} {
     color: $value !important;
   }
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-nowrap {
+  white-space: nowrap !important;
 }

@@ -1,4 +1,4 @@
-import { IMeasurement } from "./";
+import { IMeasurement, IBox } from "./";
 
 export const measurement = {
   from: (dto: any): IMeasurement => ({

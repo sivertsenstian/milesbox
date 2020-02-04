@@ -6,9 +6,12 @@ export enum HomeActionType {
   REQUEST_HEALTHCHECK = "[Home] Request Healthcheck",
   REQUEST_HEALTHCHECK_SUCCESS = "[Home][Success] Request Healthcheck",
   REQUEST_HEALTHCHECK_FAILURE = "[Home][Failure] Request Healthcheck",
-  REQUEST_DATA = "[Home] Request Data",
-  REQUEST_DATA_SUCCESS = "[Home][Success] Request Data",
-  REQUEST_DATA_FAILURE = "[Home][Failure] Request Data",
+  REQUEST_DATA_LATEST = "[Home] Request Latest Data",
+  REQUEST_DATA_LATEST_SUCCESS = "[Home][Success] Request Latest Data",
+  REQUEST_DATA_LATEST_FAILURE = "[Home][Failure] Request Latest Data",
+  REQUEST_DATA_TREND = "[Home] Request Trend Data",
+  REQUEST_DATA_TREND_SUCCESS = "[Home][Success] Request Trend Data",
+  REQUEST_DATA_TREND_FAILURE = "[Home][Failure] Request Trend Data",
   REQUEST_BOXES = "[Home] Request Boxes",
   REQUEST_BOXES_SUCCESS = "[Home][Success] Request Boxes",
   REQUEST_BOXES_FAILURE = "[Home][Failure] Request Boxes",
@@ -17,21 +20,44 @@ export enum HomeActionType {
   REQUEST_SENSORS_FAILURE = "[Home][Failure] Request Sensors"
 }
 
-export class HomeRequestData implements Action {
-  readonly type = HomeActionType.REQUEST_DATA;
+export class HomeRequestTrendData implements Action {
+  readonly type = HomeActionType.REQUEST_DATA_TREND;
   constructor(public boxId: number, public sensor: number) {}
 }
 
-export class HomeRequestDataSuccess implements Action, ISuccessAction {
-  readonly type = HomeActionType.REQUEST_DATA_SUCCESS;
+export class HomeRequestTrendDataSuccess implements Action, ISuccessAction {
+  readonly type = HomeActionType.REQUEST_DATA_TREND_SUCCESS;
   readonly success = true;
   constructor(
     public payload: { boxId: number; sensor: number; data: IMeasurement[] }
   ) {}
 }
 
-export class HomeRequestDataFailure implements Action, IFailureAction {
-  readonly type = HomeActionType.REQUEST_DATA_FAILURE;
+export class HomeRequestTrendDataFailure implements Action, IFailureAction {
+  readonly type = HomeActionType.REQUEST_DATA_TREND_FAILURE;
+  readonly failure = true;
+  constructor(public payload: any) {}
+}
+
+export class HomeRequestLatestData implements Action {
+  readonly type = HomeActionType.REQUEST_DATA_LATEST;
+  constructor(public boxId: number, public sensor: number) {}
+}
+
+export class HomeRequestLatestDataSuccess implements Action, ISuccessAction {
+  readonly type = HomeActionType.REQUEST_DATA_LATEST_SUCCESS;
+  readonly success = true;
+  constructor(
+    public payload: {
+      boxId: number;
+      sensor: number;
+      data: IMeasurement;
+    }
+  ) {}
+}
+
+export class HomeRequestLatestDataFailure implements Action, IFailureAction {
+  readonly type = HomeActionType.REQUEST_DATA_LATEST_FAILURE;
   readonly failure = true;
   constructor(public payload: any) {}
 }
@@ -88,9 +114,12 @@ export class HomeRequestHealthCheckFailure implements Action, IFailureAction {
 }
 
 export type HomeActions =
-  | HomeRequestData
-  | HomeRequestDataSuccess
-  | HomeRequestDataFailure
+  | HomeRequestTrendData
+  | HomeRequestTrendDataSuccess
+  | HomeRequestTrendDataFailure
+  | HomeRequestLatestData
+  | HomeRequestLatestDataSuccess
+  | HomeRequestLatestDataFailure
   | HomeRequestBoxes
   | HomeRequestBoxesSuccess
   | HomeRequestBoxesFailure

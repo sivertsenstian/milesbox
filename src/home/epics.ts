@@ -4,9 +4,9 @@ import { catchError, withLatestFrom, mergeMap, map } from "rxjs/operators";
 import { combineEpics, ofType } from "redux-observable";
 import {
   HomeActionType,
-  HomeRequestDataSuccess,
-  HomeRequestDataFailure,
-  HomeRequestData,
+  HomeRequestTrendDataSuccess,
+  HomeRequestTrendDataFailure,
+  HomeRequestTrendData,
   mappers
 } from "./";
 import { AppState } from "../core";
@@ -16,7 +16,10 @@ import {
   HomeRequestBoxesFailure,
   HomeRequestHealthCheck,
   HomeRequestHealthCheckSuccess,
-  HomeRequestHealthCheckFailure
+  HomeRequestHealthCheckFailure,
+  HomeRequestLatestData,
+  HomeRequestLatestDataSuccess,
+  HomeRequestLatestDataFailure
 } from "./actions";
 
 const requestHealthCheck$ = (
@@ -51,33 +54,59 @@ const requestBoxes$ = (action$: Observable<any>, store$: Observable<any>) => {
   );
 };
 
-const requestSensorData$ = (
+const requestSensorTrend$ = (
   action$: Observable<any>,
   store$: Observable<any>
 ) => {
   return action$.pipe(
-    ofType(HomeActionType.REQUEST_DATA),
+    ofType(HomeActionType.REQUEST_DATA_TREND),
     withLatestFrom(store$),
-    mergeMap(([action, store]: [HomeRequestData, AppState]) => {
+    mergeMap(([action, store]: [HomeRequestTrendData, AppState]) => {
       const { boxId, sensor } = action;
       return ajax
         .getJSON(`${store.home.server}/boxes/${boxId}/sensors/${sensor}`)
         .pipe(
           map(
             (response: any) =>
-              new HomeRequestDataSuccess({
+              new HomeRequestTrendDataSuccess({
                 ...response,
                 data: response.data.map(mappers.measurement.from)
               })
           ),
-          catchError(err => of(new HomeRequestDataFailure(err)))
+          catchError(err => of(new HomeRequestTrendDataFailure(err)))
+        );
+    })
+  );
+};
+
+const requestSensorLatest$ = (
+  action$: Observable<any>,
+  store$: Observable<any>
+) => {
+  return action$.pipe(
+    ofType(HomeActionType.REQUEST_DATA_LATEST),
+    withLatestFrom(store$),
+    mergeMap(([action, store]: [HomeRequestLatestData, AppState]) => {
+      const { boxId, sensor } = action;
+      return ajax
+        .getJSON(`${store.home.server}/boxes/${boxId}/sensors/${sensor}/latest`)
+        .pipe(
+          map(
+            (response: any) =>
+              new HomeRequestLatestDataSuccess({
+                ...response,
+                data: mappers.measurement.from(response.data)
+              })
+          ),
+          catchError(err => of(new HomeRequestLatestDataFailure(err)))
         );
     })
   );
 };
 
 export const homeEpics = combineEpics(
-  requestSensorData$,
+  requestSensorTrend$,
+  requestSensorLatest$,
   requestBoxes$,
   requestHealthCheck$
 );

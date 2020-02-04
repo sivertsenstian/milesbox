@@ -9,9 +9,9 @@ interface IconProps {
 }
 export const Icon = (props: IconProps) => {
   return (
-    <span style={{ fontSize: `${props.size}em` }}>
+    <span style={{ fontSize: `${props.size}em`, marginRight: "5px" }}>
       <span
-        className={`fas fa-${props.name} text-${props.color}`}
+        className={`icon ion-ios-${props.name} text-${props.color}`}
         aria-hidden="true"
       ></span>
     </span>
