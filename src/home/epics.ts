@@ -64,7 +64,9 @@ const requestSensorTrend$ = (
     mergeMap(([action, store]: [HomeRequestTrendData, AppState]) => {
       const { boxId, sensor } = action;
       return ajax
-        .getJSON(`${store.home.server}/boxes/${boxId}/sensors/${sensor}`)
+        .getJSON(
+          `${store.home.server}/boxes/${boxId}/sensors/${sensor}?values=200&limit=30000`
+        )
         .pipe(
           map(
             (response: any) =>
