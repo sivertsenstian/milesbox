@@ -120,7 +120,7 @@ export const Card = (props: any) => {
       _get(state.home.data, `${props.boxId}.${13}.latest`, null)
     ),
     tempProgress = valueAsPercentage(temperature?.value, {
-      min: -10,
+      min: 0,
       max: 40
     }),
     humidProgress = valueAsPercentage(humidity?.value, {
@@ -375,7 +375,7 @@ export const Trend = (props: any) => {
 
   const y = d3
     .scaleLinear()
-    .domain([-10, 40])
+    .domain([0, 40])
     .range([50, 0]);
 
   const yh = d3
@@ -414,16 +414,17 @@ export const Trend = (props: any) => {
         />
         <g clip-path="url(#valueClip)">
           {humidity.map(h => {
+            const height = yh(100 - h.value);
             return (
               <rect
                 key={h.timestamp}
+                transform={`translate(-1,${yh(h.value)})`}
                 className="fill-link"
-                fill-opacity="40%"
+                fill-opacity={`${h.value}%`}
                 x={x(h.timestamp)}
                 y={0}
                 width={2}
-                height={yh(h.value)}
-                transform={`translate(0,${50 - yh(h.value)})`}
+                height={height}
               />
             );
           })}
