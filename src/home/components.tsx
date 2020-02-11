@@ -412,18 +412,18 @@ export const Trend = (props: any) => {
           fill="none"
           className="stroke-light"
         />
-        <g clip-path="url(#valueClip)">
-          {humidity.map(h => {
+        <g clipPath="url(#valueClip)">
+          {humidity.map((h, i) => {
             const height = yh(100 - h.value);
             return (
               <rect
-                key={h.timestamp}
-                transform={`translate(-1,${yh(h.value)})`}
+                key={`humidity-${i}`}
+                transform={`translate(-0.5,${yh(h.value)})`}
                 className="fill-link"
-                fill-opacity={`${h.value}%`}
+                fillOpacity={`${h.value}%`}
                 x={x(h.timestamp)}
                 y={0}
-                width={2}
+                width={1}
                 height={height}
               />
             );
@@ -479,7 +479,7 @@ export const Trend = (props: any) => {
                 x={-2}
                 y={y(v)}
                 className="fill-mid-dark"
-                text-anchor="end"
+                textAnchor="end"
                 style={{ fontSize: 8 }}
               >
                 {v}

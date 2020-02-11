@@ -62,10 +62,14 @@ const requestSensorTrend$ = (
     ofType(HomeActionType.REQUEST_DATA_TREND),
     withLatestFrom(store$),
     mergeMap(([action, store]: [HomeRequestTrendData, AppState]) => {
-      const { boxId, sensor } = action;
+      const {
+        boxId,
+        sensor,
+        options: { values = 250, limit = 30000 }
+      } = action;
       return ajax
         .getJSON(
-          `${store.home.server}/boxes/${boxId}/sensors/${sensor}?values=200&limit=30000`
+          `${store.home.server}/boxes/${boxId}/sensors/${sensor}?values=${values}&limit=${limit}`
         )
         .pipe(
           map(

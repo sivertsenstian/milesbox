@@ -22,7 +22,14 @@ export enum HomeActionType {
 
 export class HomeRequestTrendData implements Action {
   readonly type = HomeActionType.REQUEST_DATA_TREND;
-  constructor(public boxId: number, public sensor: number) {}
+  constructor(
+    public boxId: number,
+    public sensor: number,
+    public options: {
+      values?: number;
+      limit?: number;
+    } = {}
+  ) {}
 }
 
 export class HomeRequestTrendDataSuccess implements Action, ISuccessAction {
