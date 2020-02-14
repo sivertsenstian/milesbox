@@ -23,7 +23,6 @@ import {
   HomeRequestBoxes,
   HomeRequestHealthCheck
 } from "./home";
-import "ionicons/dist/css/ionicons.min.css";
 
 // Routing
 export const history = createBrowserHistory();

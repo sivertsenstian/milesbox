@@ -1,10 +1,13 @@
-// Optionally override some settings
-// $color-brand: #ffffff;
-
 // Import the theme
-@import "node_modules/vanilla-framework/scss/vanilla";
-@include vanilla;
+@import "node_modules/bulma/bulma";
 
+// Import icons
+$fa-font-path: "../node_modules/@fortawesome/fontawesome-free/webfonts";
+@import "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
+@import "node_modules/@fortawesome/fontawesome-free/scss/brands.scss";
+
+// Custom styles
 g.gauge {
   .gauge-arc {
     fill: none;
@@ -18,64 +21,26 @@ g.bar {
   }
 }
 
-.p-card.box {
-  transition: border-top-color 1000ms;
+.card {
+  transition: border-bottom-color 1000ms;
   &.online {
-    border-top: 4px solid $color-positive;
+    border-bottom: 4px solid $success;
   }
   &.faulty {
-    border-top: 4px solid $color-caution;
+    border-bottom: 4px solid $warning;
   }
   &.offline {
-    border-top: 4px solid $color-negative;
+    border-bottom: 4px solid $danger;
   }
 
   border-radius: 4px;
 }
 
-$theme-colors: (
-  "x-light": $color-x-light,
-  "light": $color-light,
-  "mid-x-light": $color-mid-x-light,
-  "mid-light": $color-mid-light,
-  "mid-dark": $color-mid-dark,
-  "dark": $color-dark,
-  "x-dark": $color-x-dark,
-  "brand": $color-brand,
-  "negative": $color-negative,
-  "caution": $color-caution,
-  "positive": $color-positive,
-  "information": $color-information,
-  "link": $color-link,
-  "accent": $color-accent,
-  "accent-background": $color-accent-background,
-  "navigation-background": $color-x-light
-);
-
-@each $color, $value in $theme-colors {
+@each $color, $value in $colors {
   #{".fill-#{$color}"} {
-    fill: $value !important;
+    fill: nth($value, 1) !important;
   }
   #{".stroke-#{$color}"} {
-    stroke: $value !important;
+    stroke: nth($value, 1) !important;
   }
-  #{".text-#{$color}"} {
-    color: $value !important;
-  }
-}
-
-.text-right {
-  text-align: right !important;
-}
-
-.text-left {
-  text-align: left !important;
-}
-
-.text-center {
-  text-align: center !important;
-}
-
-.text-nowrap {
-  white-space: nowrap !important;
 }

@@ -23,26 +23,33 @@ export const HomePage = () => {
 
   if (boxes.length === 0) {
     return (
-      <div className="row" style={{ marginTop: "40px" }}>
-        <div
-          className="col-12"
-          style={{ justifyContent: "center", display: "flex" }}
-        >
-          <i
-            className="p-icon--spinner u-animation--spin"
-            style={{ marginRight: "10px", width: "24px", height: "24px" }}
-          ></i>
-          <div>Please wait... </div>
+      <div className="section">
+        <div className="columns" style={{ marginTop: "40px" }}>
+          <div
+            className="column is-2 is-offset-5"
+            style={{ justifyContent: "center", display: "flex" }}
+          >
+            <progress
+              className="progress is-small is-primary"
+              max="100"
+            ></progress>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="row">
-      {boxes.map(box => {
-        return <Card key={box.id} user={box.name} boxId={box.id} />;
-      })}
+    <div className="container">
+      <div className="columns is-multiline is-5">
+        {boxes.map(box => {
+          return (
+            <div className="column is-one-third">
+              <Card key={box.id} user={box.name} boxId={box.id} />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
@@ -52,14 +59,14 @@ const Value = (props: any) => {
 
   if (_isNil(props.value)) {
     return (
-      <h5 style={style} className="text-mid-light text-nowrap">
+      <h5 style={style} className="">
         No data
       </h5>
     );
   }
   return (
     <h4
-      className={`text-${props.color}`}
+      className={`text-${props.color} is-${props.color}`}
       style={style}
     >{`${props.value}${props.unit}`}</h4>
   );
@@ -73,9 +80,9 @@ const MeasurementHeader = (props: any) => {
   const valid = !_isNil(props.value?.timestamp);
 
   return (
-    <h6 className="text-center">
-      <span className={!valid ? "text-mid-light" : ""}>
-        <Icon name={props.name} size={2} />
+    <h6 className="has-text-centered">
+      <span className={!valid ? "has-text-grey-light" : ""}>
+        <Icon name={props.name} size="is-large fa-2x" />
       </span>
     </h6>
   );
@@ -143,29 +150,34 @@ export const Card = (props: any) => {
     status = ssm < 60 ? "online" : ssm < 240 ? "faulty" : "offline";
 
   return (
-    <div className={`p-card box ${status} col-4`}>
-      <h3 className="p-card__title">
-        <i className="p-icon--information"></i>
-        <span style={{ marginLeft: 5 }}>{props.user}</span>
-        <span style={{ fontSize: 15, float: "right" }}>
-          {sinceLastDate.isValid()
-            ? `Updated ${sinceLastDate.fromNow()}`
-            : "No data yet..."}
-        </span>
-      </h3>
-      <hr className="u-sv1" />
-      <div className="p-card__content">
-        <div className="row">
-          <div className="col-3">
-            <MeasurementHeader name="thermometer" value={temperature} />
+    <div className={`card ${status}`}>
+      <div className="card-content">
+        <div className="columns is-multiline">
+          <span className="column is-one-quarter">
+            <Icon name="box-open" color="info" size="is-large fa-2x" />
+          </span>
+          <p className="title column is-three-quarters">
+            {props.user}
+            <p className="subtitle column is-full has-text-grey-light is-size-6">
+              {sinceLastDate.isValid()
+                ? `Updated ${sinceLastDate.fromNow()}`
+                : "No data yet..."}
+            </p>
+          </p>
+        </div>
+      </div>
+      <div className="card-content">
+        <div className="columns">
+          <div className="column is-three-quarters">
+            <MeasurementHeader name="temperature-low" value={temperature} />
             <Gauge size={1} degrees={180}>
               <GaugeBar progress={100} size={3} />
-              <GaugeBar progress={tempProgress} color="negative" />
+              <GaugeBar progress={tempProgress} color="danger" />
             </Gauge>
             <Value value={temperature?.value} unit="℃" />
           </div>
-          <div className="col-1">
-            <MeasurementHeader name="water" value={humidity} />
+          <div className="column">
+            <MeasurementHeader name="tint" value={humidity} />
             <Bar>
               <BarFill progress={100} />
               <BarFill progress={humidProgress} color="link" />
@@ -173,13 +185,13 @@ export const Card = (props: any) => {
             <Value
               value={humidity?.value}
               unit="%"
-              color="mid-dark"
+              color="grey-light"
               offset={0}
             />
           </div>
         </div>
-        <div className="row">
-          <div className="col-4">
+        <div className="columns">
+          <div className="column">
             <Trend boxId={props.boxId} />
           </div>
         </div>
@@ -435,7 +447,7 @@ export const Trend = (props: any) => {
             const h = index === 0 ? "M" : "L";
             return (result += `${h}${x(t.timestamp)},${y(t.value)} `);
           }, "")}
-          className="stroke-negative"
+          className="stroke-danger"
           fill="none"
           strokeWidth="1"
         />
@@ -446,7 +458,7 @@ export const Trend = (props: any) => {
                 key={`x-tick-${t}`}
                 x={x(t)}
                 y={58}
-                className="fill-mid-dark"
+                className="fill-grey-light"
                 style={{ fontSize: 8 }}
               >
                 {moment(t).fromNow()}
@@ -478,7 +490,7 @@ export const Trend = (props: any) => {
                 key={`y-tick-${v}`}
                 x={-2}
                 y={y(v)}
-                className="fill-mid-dark"
+                className="fill-grey-light"
                 textAnchor="end"
                 style={{ fontSize: 8 }}
               >
@@ -490,7 +502,7 @@ export const Trend = (props: any) => {
         {last && (
           <g className="last-point">
             <circle
-              className="fill-negative"
+              className="fill-danger"
               cx={x(last.timestamp)}
               cy={y(last.value)}
               r="3"
@@ -502,7 +514,7 @@ export const Trend = (props: any) => {
               r="2"
             />
             <circle
-              className="fill-negative"
+              className="fill-danger"
               cx={x(last.timestamp)}
               cy={y(last.value)}
               r="1"

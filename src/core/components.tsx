@@ -5,13 +5,13 @@ import { AppState } from "./";
 interface IconProps {
   name: string;
   color: string;
-  size: number;
+  size: string;
 }
 export const Icon = (props: IconProps) => {
   return (
-    <span style={{ fontSize: `${props.size}em`, marginRight: "5px" }}>
+    <span className={`icon ${props.size}`}>
       <span
-        className={`icon ion-ios-${props.name} text-${props.color}`}
+        className={`fas fa-${props.name} has-text-${props.color}`}
         aria-hidden="true"
       ></span>
     </span>
@@ -19,35 +19,34 @@ export const Icon = (props: IconProps) => {
 };
 Icon.defaultProps = {
   color: "dark",
-  size: 1
+  size: ""
 };
 
 export const Header = (props: { alive: boolean }) => {
   const server = useSelector((state: AppState) => state.home.server);
   return (
-    <header className="p-navigation">
-      <div className="p-navigation__row">
-        <div className="p-navigation__banner">
-          <div className="p-navigation__logo">
-            <a
-              className="p-navigation__link u-vertically-center"
-              href={server}
-              target="_blank"
-            >
-              <i
-                style={{ marginRight: "5px" }}
-                className={props.alive ? "p-icon--success" : "p-icon--error"}
-              />
-              Online
+    <nav className="navbar" role="navigation">
+      <div className="navbar-brand">
+        <a className="navbar-item" href={server} target="_blank">
+          <Icon
+            name="cloud"
+            color={props.alive ? "success" : "danger"}
+            size="is-large fa-lg"
+          />
+          <span
+            className={props.alive ? "has-text-success" : "has-text-danger"}
+          >
+            {props.alive ? "Online" : "Offline"}
+          </span>
+        </a>
+        <div className="navbar-menu">
+          <div className="navbar-start">
+            <a className="navbar-item" href="/">
+              Boxes
             </a>
           </div>
         </div>
-        <ul className="p-navigation__links" role="menu">
-          <li className="p-navigation__link is-selected" role="menuitem">
-            <a href="/">Boxes</a>
-          </li>
-        </ul>
       </div>
-    </header>
+    </nav>
   );
 };
