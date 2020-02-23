@@ -15,8 +15,8 @@ char pass[] = SECRET_PASS;
 int status = WL_IDLE_STATUS;
 char server[] = "rest.sivertsen.tech";
 int TEMPERATURE_SENSOR = 1;
-int HUMIDITY_SENSOR = 13;
-int BOX_ID = 1000;
+int HUMIDITY_SENSOR = 2;
+int BOX_ID = 1;
 int DELAY_IN_MS = 30000;
 
 WiFiClient client;

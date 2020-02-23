@@ -14,8 +14,8 @@ int keyIndex = 0;            // your network key Index number (needed only for W
 int status = WL_IDLE_STATUS;
 char server[] = "rest.sivertsen.tech";
 int TEMPERATURE_SENSOR = 1;
-int HUMIDITY_SENSOR = 13;
-int BOX_ID = 1000;
+int HUMIDITY_SENSOR = 2;
+int BOX_ID = 1;
 
 // Initialize the Wifi client library
 WiFiSSLClient client;
@@ -47,17 +47,20 @@ void loop() {
   if (millis() - lastConnectionTime > postingInterval) {  
     long temperature = sensor.readTemperature();
     long humidity = sensor.readHumidity();
+
+    // close any connection before send a new request.
+    // This will free the socket on the Nina module
+    client.stop();
     
     sendSensorData(BOX_ID, TEMPERATURE_SENSOR, temperature);
     sendSensorData(BOX_ID, HUMIDITY_SENSOR, humidity);
+
+    // note the time that the connection was made:
+    lastConnectionTime = millis();
   }
 }
 
 void sendSensorData(long boxId, long sensorId, long sensorValue) {
-  // close any connection before send a new request.
-  // This will free the socket on the Nina module
-  client.stop();
-
   // if there's a successful connection:
   if (client.connect(server, 443)) {
     String request = String("GET /boxes/" + String(boxId) + "/sensors/" + String(sensorId) + "/add/" + String(sensorValue) + " HTTP/1.1");
@@ -67,8 +70,7 @@ void sendSensorData(long boxId, long sensorId, long sensorValue) {
     client.println("User-Agent: ArduinoWiFi/1.1");
     client.println("Connection: close");
     client.println();
-
-    // note the time that the connection was made:
-    lastConnectionTime = millis();
   } 
+  
+  delay(1000);
 }
