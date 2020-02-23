@@ -1,3 +1,4 @@
+import _get from "lodash/get";
 import { Observable, of } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { catchError, withLatestFrom, mergeMap, map } from "rxjs/operators";
@@ -61,15 +62,14 @@ const requestSensorTrend$ = (
   return action$.pipe(
     ofType(HomeActionType.REQUEST_DATA_TREND),
     withLatestFrom(store$),
-    mergeMap(([action, store]: [HomeRequestTrendData, AppState]) => {
-      const {
-        boxId,
-        sensor,
-        options: { values = 250, limit = 30000 }
-      } = action;
+    mergeMap(([action, state]: [HomeRequestTrendData, AppState]) => {
+      const { boxId, sensor } = action,
+        { server, data } = state.home,
+        values = 250,
+        minutes = _get(data, `${boxId}.${sensor}.period`, 60);
       return ajax
         .getJSON(
-          `${store.home.server}/boxes/${boxId}/sensors/${sensor}?values=${values}&limit=${limit}`
+          `${server}/boxes/${boxId}/sensors/${sensor}?values=${values}&minutes=${minutes}`
         )
         .pipe(
           map(

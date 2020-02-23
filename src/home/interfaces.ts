@@ -5,5 +5,11 @@ export interface IMeasurement {
 
 export interface IBox {
   id: number;
+  owner: IUser;
+  description: string;
+}
+
+export interface IUser {
+  id: number;
   name: string;
 }

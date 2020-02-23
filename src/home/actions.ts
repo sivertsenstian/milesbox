@@ -17,19 +17,13 @@ export enum HomeActionType {
   REQUEST_BOXES_FAILURE = "[Home][Failure] Request Boxes",
   REQUEST_SENSORS = "[Home] Request Sensors",
   REQUEST_SENSORS_SUCCESS = "[Home][Success] Request Sensors",
-  REQUEST_SENSORS_FAILURE = "[Home][Failure] Request Sensors"
+  REQUEST_SENSORS_FAILURE = "[Home][Failure] Request Sensors",
+  SET_TREND_PERIOD = "[Home] Set Trend Period"
 }
 
 export class HomeRequestTrendData implements Action {
   readonly type = HomeActionType.REQUEST_DATA_TREND;
-  constructor(
-    public boxId: number,
-    public sensor: number,
-    public options: {
-      values?: number;
-      limit?: number;
-    } = {}
-  ) {}
+  constructor(public boxId: number, public sensor: number) {}
 }
 
 export class HomeRequestTrendDataSuccess implements Action, ISuccessAction {
@@ -120,6 +114,15 @@ export class HomeRequestHealthCheckFailure implements Action, IFailureAction {
   constructor(public payload: any) {}
 }
 
+export class HomeSetTrendPeriod implements Action {
+  readonly type = HomeActionType.SET_TREND_PERIOD;
+  constructor(
+    public payload: number,
+    public box: number,
+    public sensor: number
+  ) {}
+}
+
 export type HomeActions =
   | HomeRequestTrendData
   | HomeRequestTrendDataSuccess
@@ -135,4 +138,5 @@ export type HomeActions =
   | HomeRequestSensorsFailure
   | HomeRequestHealthCheck
   | HomeRequestHealthCheckSuccess
-  | HomeRequestHealthCheckFailure;
+  | HomeRequestHealthCheckFailure
+  | HomeSetTrendPeriod;

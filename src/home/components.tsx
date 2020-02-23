@@ -14,7 +14,12 @@ import {
   valueAsPercentage,
   Icon
 } from "../core";
-import { HomeRequestTrendData, HomeRequestLatestData, IMeasurement } from "./";
+import {
+  HomeRequestTrendData,
+  HomeRequestLatestData,
+  IMeasurement,
+  HomeSetTrendPeriod
+} from "./";
 import moment from "moment";
 import * as d3 from "d3-scale";
 
@@ -44,8 +49,8 @@ export const HomePage = () => {
       <div className="columns is-multiline is-5">
         {boxes.map(box => {
           return (
-            <div className="column is-one-third">
-              <Card key={box.id} user={box.name} boxId={box.id} />
+            <div key={box.id} className="column is-one-third">
+              <Card box={box} />
             </div>
           );
         })}
@@ -89,42 +94,31 @@ const MeasurementHeader = (props: any) => {
 };
 
 export const Card = (props: any) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(),
+    box = props.box;
 
   useEffect(() => {
     // Initial data
-    dispatch(new HomeRequestLatestData(props.boxId, 1));
-    dispatch(new HomeRequestLatestData(props.boxId, 13));
+    dispatch(new HomeRequestLatestData(box.id, 1));
+    dispatch(new HomeRequestLatestData(box.id, 2));
 
-    dispatch(new HomeRequestTrendData(props.boxId, 1));
-    dispatch(new HomeRequestTrendData(props.boxId, 13));
-
-    // Poll every 30sec
-    setInterval(
-      () => dispatch(new HomeRequestLatestData(props.boxId, 1)),
-      10000
-    );
-    setInterval(
-      () => dispatch(new HomeRequestLatestData(props.boxId, 13)),
-      10000
-    );
-
-    setInterval(
-      () => dispatch(new HomeRequestTrendData(props.boxId, 1)),
-      10000
-    );
-
-    setInterval(
-      () => dispatch(new HomeRequestTrendData(props.boxId, 13)),
-      10000
-    );
+    // Poll every n sec
+    setInterval(() => dispatch(new HomeRequestLatestData(box.id, 1)), 10000);
+    setInterval(() => dispatch(new HomeRequestLatestData(box.id, 2)), 10000);
   }, []);
 
+  const tempMinutes = useSelector((state: AppState) => {
+      return _get(state.home.data, `${box?.id}.2.period`, 60);
+    }),
+    humidMinutes = useSelector((state: AppState) => {
+      return _get(state.home.data, `${box?.id}.1.period`, 60);
+    });
+
   const temperature = useSelector((state: AppState) =>
-      _get(state.home.data, `${props.boxId}.${1}.latest`, null)
+      _get(state.home.data, `${box.id}.${1}.latest`, null)
     ),
     humidity = useSelector((state: AppState) =>
-      _get(state.home.data, `${props.boxId}.${13}.latest`, null)
+      _get(state.home.data, `${box.id}.${2}.latest`, null)
     ),
     tempProgress = valueAsPercentage(temperature?.value, {
       min: 0,
@@ -156,13 +150,13 @@ export const Card = (props: any) => {
           <span className="column is-one-quarter">
             <Icon name="box-open" color="info" size="is-large fa-2x" />
           </span>
-          <p className="title column is-three-quarters">
-            {props.user}
-            <p className="subtitle column is-full has-text-grey-light is-size-6">
+          <p className="title column is-three-quarters is-size-5">
+            {box.owner.name} - {box.description}
+            <span className="subtitle column is-full has-text-grey-light is-size-7">
               {sinceLastDate.isValid()
                 ? `Updated ${sinceLastDate.fromNow()}`
                 : "No data yet..."}
-            </p>
+            </span>
           </p>
         </div>
       </div>
@@ -192,7 +186,8 @@ export const Card = (props: any) => {
         </div>
         <div className="columns">
           <div className="column">
-            <Trend boxId={props.boxId} />
+            <Trend box={box} tempSensor={{ id: 1 }} humidSensor={{ id: 2 }} />
+            <TrendTime box={box} current={tempMinutes || humidMinutes} />
           </div>
         </div>
       </div>
@@ -360,6 +355,25 @@ export const Bar = (props: IBaseBarProps) => {
 Bar.defaultProps = baseBarProps;
 
 export const Trend = (props: any) => {
+  const { tempSensor, humidSensor, box } = props,
+    dispatch = useDispatch();
+
+  // Initial data
+  useEffect(() => {
+    dispatch(new HomeRequestTrendData(box.id, tempSensor.id));
+    dispatch(new HomeRequestTrendData(box.id, humidSensor.id));
+  }, []);
+
+  // Poll every n sec
+  useEffect(() => {
+    setInterval(() => {
+      dispatch(new HomeRequestTrendData(box.id, tempSensor.id));
+    }, 10000);
+    setInterval(() => {
+      dispatch(new HomeRequestTrendData(box.id, humidSensor.id));
+    }, 10000);
+  }, []);
+
   const height = 50,
     width = 250;
   const padding = {
@@ -377,12 +391,20 @@ export const Trend = (props: any) => {
 
   const temperature = useSelector(
     (state: AppState) =>
-      _get(state.home.data, `${props.boxId}.${1}.trend`, []) as IMeasurement[]
+      _get(
+        state.home.data,
+        `${box.id}.${tempSensor.id}.trend`,
+        []
+      ) as IMeasurement[]
   );
 
   const humidity = useSelector(
     (state: AppState) =>
-      _get(state.home.data, `${props.boxId}.${13}.trend`, []) as IMeasurement[]
+      _get(
+        state.home.data,
+        `${box.id}.${humidSensor.id}.trend`,
+        []
+      ) as IMeasurement[]
   );
 
   const y = d3
@@ -523,5 +545,56 @@ export const Trend = (props: any) => {
         )}
       </g>
     </svg>
+  );
+};
+
+const TrendTime = (props: any) => {
+  const { current, box } = props,
+    dispatch = useDispatch(),
+    setPeriod = (minutes: number) => {
+      dispatch(new HomeSetTrendPeriod(minutes, box.id, 1));
+      dispatch(new HomeSetTrendPeriod(minutes, box.id, 2));
+    };
+
+  return (
+    <div className="columns" style={{ marginTop: "10px" }}>
+      <div className="column is-right is-one-quarter">Last:</div>
+      <div className="column is-three-quarters">
+        <div className="buttons has-addons is-right">
+          <div
+            className={`button is-small is-${
+              current === 43830 ? "success" : ""
+            }`}
+            onClick={() => setPeriod(43830)}
+          >
+            Month
+          </div>
+          <div
+            className={`button is-small is-${
+              current === 10080 ? "success" : ""
+            }`}
+            onClick={() => setPeriod(10080)}
+          >
+            Week
+          </div>
+          <div
+            className={`button is-small is-${
+              current === 1440 ? "success" : ""
+            }`}
+            onClick={() => setPeriod(1440)}
+          >
+            Day
+          </div>
+          <div
+            className={`button is-small is-${
+              _isNil(current) || current === 60 ? "success" : ""
+            }`}
+            onClick={() => setPeriod(60)}
+          >
+            Hour
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

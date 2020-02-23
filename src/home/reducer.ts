@@ -1,5 +1,7 @@
+import _get from "lodash/get";
+import _isNil from "lodash/isNil";
 import dotp from "dot-prop-immutable-chain";
-import { HomeActions, HomeActionType, IMeasurement, IBox } from "./";
+import { HomeActions, HomeActionType, IMeasurement } from "./";
 
 export interface HomeState {
   server: string;
@@ -11,6 +13,7 @@ export interface HomeState {
       [key: number]: {
         trend: IMeasurement[];
         latest: IMeasurement;
+        period: number;
       };
     };
   };
@@ -35,9 +38,15 @@ export const homeReducer = (state = initialState, action: HomeActions) => {
         .value();
     }
     case HomeActionType.REQUEST_DATA_TREND_SUCCESS: {
-      const { boxId, sensor, data } = action.payload;
+      const { boxId, sensor, data } = action.payload,
+        current = _get(state, `data.${boxId}.${sensor}.period`);
+
       return dotp(state)
         .set(`data.${boxId}.${sensor}.trend`, data)
+        .set(
+          `data.${boxId}.${sensor}.period`,
+          _isNil(current) ? 10080 : current
+        )
         .value();
     }
     case HomeActionType.REQUEST_DATA_LATEST_SUCCESS: {
@@ -54,6 +63,12 @@ export const homeReducer = (state = initialState, action: HomeActions) => {
     case HomeActionType.REQUEST_HEALTHCHECK_FAILURE: {
       return dotp(state)
         .set("alive", false)
+        .value();
+    }
+    case HomeActionType.SET_TREND_PERIOD: {
+      const { payload: minutes, box, sensor } = action;
+      return dotp(state)
+        .set(`data.${box}.${sensor}.period`, minutes)
         .value();
     }
     default:

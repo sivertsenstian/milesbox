@@ -9,7 +9,11 @@ export const measurement = {
 
 export const box = {
   from: (dto: any): IBox => ({
-    id: Number(dto.boxId),
-    name: dto.name
+    id: Number(dto.id),
+    owner: {
+      id: Number(dto.ownerId),
+      name: dto.ownerName
+    },
+    description: dto.description
   })
 };
