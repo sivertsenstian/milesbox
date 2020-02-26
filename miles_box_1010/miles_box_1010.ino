@@ -35,12 +35,6 @@ void setup() {
     // don't continue
     while (true);
   }
-
-  while (status != WL_CONNECTED) {
-    status = WiFi.begin(ssid, pass);
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
 }
 
 void loop() {
@@ -51,7 +45,11 @@ void loop() {
     // close any connection before send a new request.
     // This will free the socket on the Nina module
     client.stop();
-    
+
+    // connect to wifi if not connected
+    connect();
+
+    // send data
     sendSensorData(BOX_ID, TEMPERATURE_SENSOR, temperature);
     sendSensorData(BOX_ID, HUMIDITY_SENSOR, humidity);
 
@@ -73,4 +71,12 @@ void sendSensorData(long boxId, long sensorId, long sensorValue) {
   } 
   
   delay(1000);
+}
+
+void connect() {
+  while (status != WL_CONNECTED) {
+    status = WiFi.begin(ssid, pass);
+    // wait 10 seconds for connection:
+    delay(10000);
+  }
 }
