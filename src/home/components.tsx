@@ -146,7 +146,7 @@ export const Card = (props: any) => {
   return (
     <div className={`card ${status}`}>
       <div className="card-content">
-        <div className="columns is-multiline">
+        <div className="columns is-mobile is-multiline">
           <span className="column is-one-quarter">
             <Icon name="box-open" color="info" size="is-large fa-2x" />
           </span>
@@ -161,7 +161,7 @@ export const Card = (props: any) => {
         </div>
       </div>
       <div className="card-content">
-        <div className="columns">
+        <div className="columns is-mobile">
           <div className="column is-three-quarters">
             <MeasurementHeader name="temperature-low" value={temperature} />
             <Gauge size={1} degrees={180}>
@@ -184,7 +184,7 @@ export const Card = (props: any) => {
             />
           </div>
         </div>
-        <div className="columns">
+        <div className="columns is-mobile">
           <div className="column">
             <Trend box={box} tempSensor={{ id: 1 }} humidSensor={{ id: 2 }} />
             <TrendTime box={box} current={tempMinutes || humidMinutes} />
@@ -557,7 +557,7 @@ const TrendTime = (props: any) => {
     };
 
   return (
-    <div className="columns" style={{ marginTop: "10px" }}>
+    <div className="columns is-mobile" style={{ marginTop: "10px" }}>
       <div className="column is-right is-one-quarter">Last:</div>
       <div className="column is-three-quarters">
         <div className="buttons has-addons is-right">
