@@ -148,7 +148,17 @@ export const Card = (props: any) => {
       <div className="card-content">
         <div className="columns is-mobile is-multiline">
           <span className="column is-one-quarter">
-            <Icon name="box-open" color="info" size="is-large fa-2x" />
+            <Icon
+              name="box-open"
+              color={
+                status === "online"
+                  ? "success"
+                  : status === "faulty"
+                  ? "warning"
+                  : "danger"
+              }
+              size="is-large fa-2x"
+            />
           </span>
           <p className="title column is-three-quarters is-size-5">
             {box.owner.name} - {box.description}
