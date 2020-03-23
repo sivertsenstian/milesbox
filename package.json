@@ -8,7 +8,7 @@
     "start": "parcel ./assets/index.html",
     "dist": "parcel build ./assets/index.html",
     "zip": "zip -r dist.zip dist package.json package-lock.json",
-    "publish": "scp dist.zip pi@192.168.86.82:~/box/",
+    "publish": "scp dist.zip stian@192.168.86.250:~/loadout/",
     "release": "npm run dist && npm run zip && npm run publish"
   },
   "author": "",

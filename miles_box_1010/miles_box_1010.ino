@@ -15,14 +15,11 @@ int status = WL_IDLE_STATUS;
 char server[] = "rest.sivertsen.tech";
 int TEMPERATURE_SENSOR = 1;
 int HUMIDITY_SENSOR = 2;
-int BOX_ID = 1;
+int BOX_ID = 20;
 
 // Initialize the Wifi client library
 WiFiSSLClient client;
 Adafruit_Si7021 sensor = Adafruit_Si7021();
-
-unsigned long lastConnectionTime = 0;            // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 30L * 1000L; // delay between updates, in milliseconds
 
 void setup() {
   // check for the WiFi module:
@@ -38,24 +35,21 @@ void setup() {
 }
 
 void loop() {
-  if (millis() - lastConnectionTime > postingInterval) {  
-    long temperature = sensor.readTemperature();
-    long humidity = sensor.readHumidity();
+  // connect to wifi if not connected
+  connect();
 
-    // close any connection before send a new request.
-    // This will free the socket on the Nina module
-    client.stop();
+  long temperature = sensor.readTemperature();
+  long humidity = sensor.readHumidity();
 
-    // connect to wifi if not connected
-    connect();
+  // send data
+  sendSensorData(BOX_ID, TEMPERATURE_SENSOR, temperature);
+  sendSensorData(BOX_ID, HUMIDITY_SENSOR, humidity);
 
-    // send data
-    sendSensorData(BOX_ID, TEMPERATURE_SENSOR, temperature);
-    sendSensorData(BOX_ID, HUMIDITY_SENSOR, humidity);
+  // Disconnect after sending data;
+  client.stop();
 
-    // note the time that the connection was made:
-    lastConnectionTime = millis();
-  }
+  // wait a bit before next update
+  delay(20000);
 }
 
 void sendSensorData(long boxId, long sensorId, long sensorValue) {
@@ -70,7 +64,7 @@ void sendSensorData(long boxId, long sensorId, long sensorValue) {
     client.println();
   } 
   
-  delay(1000);
+  delay(5000);
 }
 
 void connect() {
