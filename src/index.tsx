@@ -57,7 +57,7 @@ const middleware =
       ]
     : [epicMiddleware, classActionMiddleware];
 const store = createStore(
-  createRootReducer(history),
+  createRootReducer(),
   initialState,
   composeWithDevTools(applyMiddleware(...middleware))
 );

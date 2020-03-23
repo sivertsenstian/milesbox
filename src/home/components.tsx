@@ -26,6 +26,8 @@ import * as d3 from "d3-scale";
 export const HomePage = () => {
   const boxes = useSelector((state: AppState) => state.home.boxes);
 
+  const [filter, setFilter] = useState("online");
+
   if (boxes.length === 0) {
     return (
       <div className="section">
@@ -46,13 +48,37 @@ export const HomePage = () => {
 
   return (
     <div className="container">
+      <div className="columns is-full-width is-right">
+        <div className="buttons has-addons is-right" style={{ marginTop: 20 }}>
+          <div
+            className={`button ${
+              filter === "online" ? "is-success is-selected" : ""
+            }`}
+            onClick={() => setFilter("online")}
+          >
+            Online
+          </div>
+          <div
+            className={`button ${
+              filter === "faulty" ? "is-warning is-selected" : ""
+            }`}
+            onClick={() => setFilter("faulty")}
+          >
+            Faulty
+          </div>
+          <div
+            className={`button ${
+              filter === "offline" ? "is-danger is-selected" : ""
+            }`}
+            onClick={() => setFilter("offline")}
+          >
+            Offline
+          </div>
+        </div>
+      </div>
       <div className="columns is-multiline is-5">
         {boxes.map(box => {
-          return (
-            <div key={box.id} className="column is-one-third">
-              <Card box={box} />
-            </div>
-          );
+          return <Card box={box} filter={filter} />;
         })}
       </div>
     </div>
@@ -143,61 +169,67 @@ export const Card = (props: any) => {
     ssm = Math.min(moment().diff(sinceLastDate, "seconds")),
     status = ssm < 60 ? "online" : ssm < 240 ? "faulty" : "offline";
 
+  if (status !== props.filter) {
+    return null;
+  }
+
   return (
-    <div className={`card ${status}`}>
-      <div className="card-content">
-        <div className="columns is-mobile is-multiline">
-          <span className="column is-one-quarter">
-            <Icon
-              name="box-open"
-              color={
-                status === "online"
-                  ? "success"
-                  : status === "faulty"
-                  ? "warning"
-                  : "danger"
-              }
-              size="is-large fa-2x"
-            />
-          </span>
-          <p className="title column is-three-quarters is-size-5">
-            {box.owner.name} - {box.description}
-            <span className="subtitle column is-full has-text-grey-light is-size-7">
-              {sinceLastDate.isValid()
-                ? `Updated ${sinceLastDate.fromNow()}`
-                : "No data yet..."}
+    <div key={box.id} className="column is-one-third">
+      <div className={`card ${status}`}>
+        <div className="card-content">
+          <div className="columns is-mobile is-multiline">
+            <span className="column is-one-quarter">
+              <Icon
+                name="box-open"
+                color={
+                  status === "online"
+                    ? "success"
+                    : status === "faulty"
+                    ? "warning"
+                    : "danger"
+                }
+                size="is-large fa-2x"
+              />
             </span>
-          </p>
-        </div>
-      </div>
-      <div className="card-content">
-        <div className="columns is-mobile">
-          <div className="column is-three-quarters">
-            <MeasurementHeader name="temperature-low" value={temperature} />
-            <Gauge size={1} degrees={180}>
-              <GaugeBar progress={100} size={3} />
-              <GaugeBar progress={tempProgress} color="danger" />
-            </Gauge>
-            <Value value={temperature?.value} unit="℃" />
-          </div>
-          <div className="column">
-            <MeasurementHeader name="tint" value={humidity} />
-            <Bar>
-              <BarFill progress={100} />
-              <BarFill progress={humidProgress} color="link" />
-            </Bar>
-            <Value
-              value={humidity?.value}
-              unit="%"
-              color="grey-light"
-              offset={0}
-            />
+            <p className="title column is-three-quarters is-size-5">
+              {box.owner.name} - {box.description}
+              <span className="subtitle column is-full has-text-grey-light is-size-7">
+                {sinceLastDate.isValid()
+                  ? `Updated ${sinceLastDate.fromNow()}`
+                  : "No data yet..."}
+              </span>
+            </p>
           </div>
         </div>
-        <div className="columns is-mobile">
-          <div className="column">
-            <Trend box={box} tempSensor={{ id: 1 }} humidSensor={{ id: 2 }} />
-            <TrendTime box={box} current={tempMinutes || humidMinutes} />
+        <div className="card-content">
+          <div className="columns is-mobile">
+            <div className="column is-three-quarters">
+              <MeasurementHeader name="temperature-low" value={temperature} />
+              <Gauge size={1} degrees={180}>
+                <GaugeBar progress={100} size={3} />
+                <GaugeBar progress={tempProgress} color="danger" />
+              </Gauge>
+              <Value value={temperature?.value} unit="℃" />
+            </div>
+            <div className="column">
+              <MeasurementHeader name="tint" value={humidity} />
+              <Bar>
+                <BarFill progress={100} />
+                <BarFill progress={humidProgress} color="link" />
+              </Bar>
+              <Value
+                value={humidity?.value}
+                unit="%"
+                color="grey-light"
+                offset={0}
+              />
+            </div>
+          </div>
+          <div className="columns is-mobile">
+            <div className="column">
+              <Trend box={box} tempSensor={{ id: 1 }} humidSensor={{ id: 2 }} />
+              <TrendTime box={box} current={tempMinutes || humidMinutes} />
+            </div>
           </div>
         </div>
       </div>
